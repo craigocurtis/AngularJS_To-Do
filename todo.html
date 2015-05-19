@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html ng-app="nameApp" lang="en ">
+	<head>
+		
+		<!-- Sets characters to English -->
+		<meta charset="UTF-8">
+		<!-- oldIE -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<!-- Sets initial size of page -->
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<!-- Shows up in search engine results -->
+    	<meta name="description" content="An app to add messages">
+    	<!-- Attributes site to creator -->
+    	<meta name="author" content="Craig O. Curtis">
+    	<!-- Displays in web browser tab -->
+		<title>Message Adding App</title>
+		<!-- Makes all content cross-Browser-friendly -->
+		<link href="css/normalize.css" rel="stylesheet" type="text/css" />
+		<!-- Links to external CSS file -->		
+		<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+		<script src="js/angular.min.js"></script>
+		<!-- 
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script> -->
+
+		<script>
+			<!-- must make variable app name THE SAME AS the ng-app name! -->
+			var nameApp = angular.module('nameApp', []);
+			nameApp.controller('NameCtrl', function($scope){
+				$scope.names = ['do the laundry','buy bananas','do the dishes','mow the lawn'];
+				$scope.removedNames = []; // added this
+				$scope.completedNames = []; // added this
+				$scope.date = new Date();
+
+				$scope.addName = function() {
+					// also need to get new date and time stamp it on item
+					$scope.names.unshift($scope.enteredName);
+					$scope.enteredName = "";
+				};
+
+				$scope.removeName = function(name){
+					var i = $scope.names.indexOf(name);
+					$scope.names.splice(i, 1);
+					
+					$scope.removedNames.unshift(name + " DELETED AT " + $scope.date);
+				};
+
+				$scope.completeName = function(name){
+					var j = $scope.names.indexOf(name);
+					$scope.names.splice(j, 1);
+					$scope.completedNames.unshift(name + " COMPLETED AT " + new Date());
+				};
+			});
+		</script>
+
+	</head>
+	<body ng-controller="NameCtrl">
+		<div class="container-fluid">
+			 <div class="row">
+				<div class="col-xs-12 jumbotron">
+					<form ng-submit="addName()">
+						<input type="text" ng-model="enteredName" class="form-control" placeholder="Enter task">
+						<input type="submit" class="form-control btn-primary" value="Add">
+					</form>
+					<ul style="padding: 0;">
+						<li class="list-group-item btn text-primary" data-toggle="tooltip" ng-repeat="name in names" title="Created {{ date | date: 'short' }}">
+							{{ name }}
+
+							<button class="btn btn-xs btn-success pull-left" ng-click="completeName(name)"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button> <!-- added completeName(name) function -->
+
+							<button class="btn btn-xs btn-danger pull-right" ng-click="removeName(name)"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button> <!-- altered removeName(name) function  -- even though it still works without the name param... -->
+
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12 jumbotron btn-success">
+					<h3>Completed</h3>
+					<ul class="completed">
+						<li class="list-group-item text-success text-center" ng-repeat="name in completedNames"> {{ name }} </li> <!-- altered this -->
+					</ul>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-12 jumbotron btn-danger">
+					<h3>Deleted</h3>
+					<ul class="removed">
+						<li class="list-group-item text-danger text-center" ng-repeat="name in removedNames"> {{ name }} </li> <!-- altered this -->
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</body>
+	<!-- from http://jsfiddle.net/8qv1Lpcj/3/ -->
+</html>
